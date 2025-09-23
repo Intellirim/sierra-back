@@ -1,0 +1,225 @@
+<!-- src/templates/report.html -->
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sierra 투자 리포트</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind CDN (runtime) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 인쇄용 공통 CSS (⚠️ @apply 사용 금지) -->
+    <style>
+      @page { size: A4; margin: 16mm; }
+      @media print {
+        html, body { height: auto; }
+        .page-break { page-break-after: always; }
+      }
+    </style>
+  </head>
+
+  <body class="bg-neutral-100 text-neutral-900 antialiased">
+    <!-- Wrapper -->
+    <div class="mx-auto max-w-[800px] bg-white shadow-sm ring-1 ring-neutral-200 rounded-2xl overflow-hidden">
+
+      <!-- 헤더 -->
+      <header class="px-8 py-6 border-b border-neutral-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 id="report-title" class="text-2xl font-semibold tracking-tight">개인화 투자 리포트</h1>
+            <p id="report-subtitle" class="mt-1 text-sm text-neutral-500">생성일: <span id="generated-at">–</span></p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500"></div>
+            <span class="text-sm font-medium text-neutral-700">Sierra</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- 사용자 메타 / 요약 -->
+      <section class="px-8 py-6 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-neutral-100">
+        <div class="rounded-xl border border-neutral-200/60 bg-white p-4">
+          <p class="text-xs uppercase tracking-wide text-neutral-500">사용자</p>
+          <p id="user-name" class="mt-1 text-sm font-medium">–</p>
+          <p id="user-goal" class="text-sm text-neutral-600">목표: –</p>
+        </div>
+
+        <div class="rounded-xl border border-neutral-200/60 bg-white p-4">
+          <p class="text-xs uppercase tracking-wide text-neutral-500">투자 성향</p>
+          <p id="risk" class="mt-1 text-sm font-medium">–</p>
+          <p id="horizon" class="text-sm text-neutral-600">기간: –</p>
+        </div>
+
+        <div class="rounded-xl border border-neutral-200/60 bg-white p-4">
+          <p class="text-xs uppercase tracking-wide text-neutral-500">리스크 한도</p>
+          <p class="mt-1 text-sm"><span class="font-medium">손실한도</span> <span id="loss-limit">–</span>%</p>
+          <p class="text-sm"><span class="font-medium">선호변동성</span> <span id="vol-pref">–</span>%</p>
+        </div>
+      </section>
+
+      <!-- 자산 요약 카드 -->
+      <section class="px-8 pt-6 pb-2">
+        <h2 class="text-lg font-semibold">자산 요약</h2>
+        <p class="mt-1 text-sm text-neutral-600">입력한 자산 구성을 간단히 정리했습니다.</p>
+
+        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-neutral-200/60 bg-white p-5">
+            <p class="text-sm font-medium">총 자산 개요</p>
+            <ul id="asset-summary" class="mt-3 text-sm text-neutral-700 list-disc list-inside space-y-1">
+              <!-- JS로 항목 삽입 -->
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border border-neutral-200/60 bg-white p-5">
+            <p class="text-sm font-medium">포트폴리오 하이라이트</p>
+            <ul id="highlights" class="mt-3 text-sm text-neutral-700 list-disc list-inside space-y-1">
+              <!-- JS로 항목 삽입 -->
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tavily 기반 인사이트 -->
+      <section class="px-8 pt-4 pb-6">
+        <h2 class="text-lg font-semibold">시장/리스크 인사이트</h2>
+        <p class="mt-1 text-sm text-neutral-600">검색·요약 기반의 핵심 포인트입니다.</p>
+
+        <div class="mt-4 grid grid-cols-1 gap-4">
+          <article class="rounded-2xl border border-neutral-200/60 bg-white p-5">
+            <h3 class="text-sm font-semibold">요약</h3>
+            <p id="insight-summary" class="mt-2 text-sm leading-6 text-neutral-800">
+              <!-- JS로 텍스트 삽입 -->
+            </p>
+          </article>
+
+          <article class="rounded-2xl border border-neutral-200/60 bg-white p-5">
+            <h3 class="text-sm font-semibold">권고 액션</h3>
+            <ul id="insight-actions" class="mt-2 text-sm text-neutral-800 list-disc list-inside space-y-1">
+              <!-- JS로 항목 삽입 -->
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- 상세 테이블 -->
+      <section class="px-8 pt-2 pb-8">
+        <h2 class="text-lg font-semibold">상세 자산 내역</h2>
+        <div class="mt-3 overflow-hidden rounded-xl border border-neutral-200/80">
+          <table class="w-full border-collapse text-sm">
+            <thead class="bg-neutral-50">
+              <tr class="text-left">
+                <th class="px-4 py-3 font-medium text-neutral-700">구분</th>
+                <th class="px-4 py-3 font-medium text-neutral-700">식별자</th>
+                <th class="px-4 py-3 font-medium text-neutral-700">수량</th>
+                <th class="px-4 py-3 font-medium text-neutral-700">평단</th>
+                <th class="px-4 py-3 font-medium text-neutral-700">비고</th>
+              </tr>
+            </thead>
+            <tbody id="assets-table">
+              <!-- JS로 행 삽입 -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 푸터 / QR -->
+      <footer class="px-8 py-6 bg-neutral-50 border-t border-neutral-200 rounded-b-2xl">
+        <div class="flex items-center justify-between">
+          <p class="text-xs text-neutral-500">본 리포트는 참고용이며 투자 손익에 대한 책임은 투자자 본인에게 있습니다.</p>
+          <div class="flex items-center gap-3">
+            <div id="qr" class="h-14 w-14 rounded-md bg-white border border-neutral-200 overflow-hidden flex items-center justify-center">
+              <!-- JS로 QR 삽입 (data URL img) -->
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- 데이터 바인딩 스크립트 (pdfService.ts에서 evaluate로 주입) -->
+    <script>
+      // pdfService.ts에서 page.evaluate(...)로 아래 함수를 호출하여 DOM에 데이터 주입한다고 가정
+      window.__injectReportData = (payload) => {
+        const { user, profile, summary, insights, tableRows, generatedAt, qrDataUrl } = payload || {};
+
+        const $ = (id) => document.getElementById(id);
+
+        if ($("generated-at")) $("generated-at").textContent = generatedAt || "";
+
+        if (user?.name && $("user-name")) $("user-name").textContent = user.name;
+        if (profile?.goal && $("user-goal")) $("user-goal").textContent = `목표: ${profile.goal}`;
+        if (profile?.risk && $("risk")) $("risk").textContent = profile.risk;
+        if (profile?.horizon && $("horizon")) $("horizon").textContent = `기간: ${profile.horizon}`;
+        if (profile?.lossLimit != null && $("loss-limit")) $("loss-limit").textContent = profile.lossLimit;
+        if (profile?.volPref != null && $("vol-pref")) $("vol-pref").textContent = profile.volPref;
+
+        // 자산 요약
+        const assetSummary = $("asset-summary");
+        if (assetSummary && Array.isArray(summary?.bullets)) {
+          assetSummary.innerHTML = "";
+          summary.bullets.forEach((t) => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            assetSummary.appendChild(li);
+          });
+        }
+
+        // 하이라이트
+        const highlights = $("highlights");
+        if (highlights && Array.isArray(summary?.highlights)) {
+          highlights.innerHTML = "";
+          summary.highlights.forEach((t) => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            highlights.appendChild(li);
+          });
+        }
+
+        // 인사이트
+        if ($("insight-summary") && insights?.summary) $("insight-summary").textContent = insights.summary;
+        const insightActions = $("insight-actions");
+        if (insightActions && Array.isArray(insights?.actions)) {
+          insightActions.innerHTML = "";
+          insights.actions.forEach((t) => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            insightActions.appendChild(li);
+          });
+        }
+
+        // 상세 테이블
+        const tbody = $("assets-table");
+        if (tbody && Array.isArray(tableRows)) {
+          tbody.innerHTML = "";
+          tableRows.forEach((r, idx) => {
+            const tr = document.createElement("tr");
+            tr.className = idx % 2 ? "bg-white" : "bg-neutral-50/60";
+            [
+              r.kind || "-",
+              r.code || "-",
+              r.qty ?? "-",
+              r.avgCost ?? "-",
+              r.note || "-"
+            ].forEach((cell) => {
+              const td = document.createElement("td");
+              td.className = "px-4 py-3 text-neutral-800";
+              td.textContent = String(cell);
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        }
+
+        // QR
+        const qr = $("qr");
+        if (qr && qrDataUrl) {
+          qr.innerHTML = "";
+          const img = document.createElement("img");
+          img.src = qrDataUrl;
+          img.alt = "QR";
+          img.className = "h-full w-full object-contain";
+          qr.appendChild(img);
+        }
+      };
+    </script>
+  </body>
+</html>
