@@ -1,17 +1,24 @@
-import { Router } from 'express';
-import { sendReportEmail } from '../services/emailService.js';
+// src/routes/email.ts
+import { Router, Request, Response, NextFunction } from "express";
+import { sendReportEmail } from "../services/emailService.js";
 
 const router = Router();
 
-router.get('/health', (_req, res) => res.json({ ok: true, scope: 'email' }));
+router.get("/health", (_req: Request, res: Response) =>
+  res.json({ ok: true, scope: "email" })
+);
 
-router.post('/send', async (req, res, next) => {
+router.post("/send", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { to, subject, html } = req.body || {};
-    if (!to || !subject || !html) return res.status(400).json({ error: 'to, subject, html required' });
-    const data = await sendReportEmail({ to, subject, html });
+    const { email, subject, html } = req.body || {};
+    if (!email || !html) {
+      return res.status(400).json({ error: "email, html is required (subject optional)" });
+    }
+    const data = await sendReportEmail({ email, subject, html });
     res.json({ ok: true, data });
-  } catch (e) { next(e); }
+  } catch (e) {
+    next(e);
+  }
 });
 
 export default router;

@@ -3,11 +3,11 @@ import { Resend } from "resend";
 import { logger } from "../utils/logger.js";
 import { getEnv } from "../utils/env.js";
 
-type SendReportArgs = {
-  email: string;
+export type SendReportArgs = {
+  email: string;           // 수신자
   subject?: string;
   html: string;
-  pdfBuffer?: Buffer; // Puppeteer 생성 버퍼
+  pdfBuffer?: Buffer;      // Puppeteer 생성 버퍼(선택)
 };
 
 const resend = new Resend(getEnv("RESEND_API_KEY"));
@@ -26,12 +26,7 @@ export async function sendReportEmail({
     subject,
     html,
     attachments: pdfBuffer
-      ? [
-          {
-            filename: "report.pdf",
-            content: pdfBuffer, // Buffer 그대로 전달
-          },
-        ]
+      ? [{ filename: "report.pdf", content: pdfBuffer }]
       : undefined,
   });
 
@@ -45,7 +40,6 @@ export async function sendReportEmail({
     );
   }
 
-  // 성공 시 data.id 로 접근해야 함
   logger.info(`이메일 전송 완료: ${response.data!.id}`);
   return response.data; // { id: string }
 }
