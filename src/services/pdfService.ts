@@ -1,10 +1,11 @@
+// src/services/pdfService.ts
 import path from "node:path";
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
 import puppeteer from "puppeteer";
-import type { IntakeSummary } from "../types";
-import { logger } from "../utils/logger";
+import type { IntakeSummary } from "../types/index.js"; // ✅ .js 확장자 명시
+import { logger } from "../utils/logger.js";           // ✅ .js 확장자 명시
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,13 +36,13 @@ function computeAllocation(summary: IntakeSummary) {
 
   // 간이 평가액: qty * avgCost / price 없을 때는 입력값 기반 추정
   const cryptoVal = sum(
-    (summary.crypto ?? []).map((r) => num(r.qty) * (num(r.avgCost) || 1))
+    (summary.crypto ?? []).map((r: any) => num(r.qty) * (num(r.avgCost) || 1)) // ✅ any 지정
   );
   const equityVal = sum(
-    (summary.equity ?? []).map((r) => num(r.qty) * (num(r.avgCost) || 1))
+    (summary.equity ?? []).map((r: any) => num(r.qty) * (num(r.avgCost) || 1)) // ✅ any 지정
   );
-  const realVal = sum((summary.realestate ?? []).map((r) => num(r.price)));
-  const fixedVal = sum((summary.fixed ?? []).map((r) => num(r.coupon) + num(r.duration))); // 정보 부족 시 작은 가중치
+  const realVal = sum((summary.realestate ?? []).map((r: any) => num(r.price))); // ✅ any 지정
+  const fixedVal = sum((summary.fixed ?? []).map((r: any) => num(r.coupon) + num(r.duration))); // ✅ any 지정
   const cashVal = num(summary.cash?.amount);
 
   buckets.crypto = cryptoVal;
@@ -63,14 +64,14 @@ function topHoldings(summary: IntakeSummary) {
   type Row = { name: string; value: number; meta?: string };
   const rows: Row[] = [];
 
-  (summary.crypto ?? []).forEach((r) =>
+  (summary.crypto ?? []).forEach((r: any) =>   // ✅ any 지정
     rows.push({
       name: r.symbol || "Crypto",
       value: num(r.qty) * (num(r.avgCost) || 1),
       meta: r.chain || r.venue,
     })
   );
-  (summary.equity ?? []).forEach((r) =>
+  (summary.equity ?? []).forEach((r: any) =>   // ✅ any 지정
     rows.push({
       name: r.ticker || "Equity",
       value: num(r.qty) * (num(r.avgCost) || 1),
@@ -99,24 +100,36 @@ function riskAndFit(summary: IntakeSummary) {
 
   // 목표 적합도: goal과 현재 분산 정도로 간단 산정
   const alloc = computeAllocation(summary).dist;
-  const growthTilt = (alloc.find((d) => d.label === "equity")?.value ?? 0) + (alloc.find((d) => d.label === "crypto")?.value ?? 0);
-  const preserveTilt = (alloc.find((d) => d.label === "fixed")?.value ?? 0) + (alloc.find((d) => d.label === "cash")?.value ?? 0);
+  const growthTilt =
+    (alloc.find((d) => d.label === "equity")?.value ?? 0) +
+    (alloc.find((d) => d.label === "crypto")?.value ?? 0);
+  const preserveTilt =
+    (alloc.find((d) => d.label === "fixed")?.value ?? 0) +
+    (alloc.find((d) => d.label === "cash")?.value ?? 0);
 
   let fit = 50;
   if (goal === "growth") fit = clamp(40 + growthTilt * 0.6);
   if (goal === "preserve") fit = clamp(40 + preserveTilt * 0.6);
-  if (goal === "income") fit = clamp(35 + (preserveTilt + (alloc.find((d) => d.label === "realestate")?.value ?? 0)) * 0.5);
-  if (goal === "speculative") fit = clamp(30 + (growthTilt + (alloc.find((d) => d.label === "crypto")?.value ?? 0)) * 0.7);
+  if (goal === "income")
+    fit = clamp(
+      35 +
+        (preserveTilt + (alloc.find((d) => d.label === "realestate")?.value ?? 0)) * 0.5
+    );
+  if (goal === "speculative")
+    fit = clamp(
+      30 +
+        (growthTilt + (alloc.find((d) => d.label === "crypto")?.value ?? 0)) * 0.7
+    );
 
   return { riskScore, fitScore: Math.round(fit) };
 }
 
 function stressTest(summary: IntakeSummary) {
   const rows: { label: string; base: number }[] = [];
-  (summary.crypto ?? []).forEach((r) =>
+  (summary.crypto ?? []).forEach((r: any) => // ✅ any 지정
     rows.push({ label: r.symbol || "Crypto", base: num(r.qty) * (num(r.avgCost) || 1) })
   );
-  (summary.equity ?? []).forEach((r) =>
+  (summary.equity ?? []).forEach((r: any) => // ✅ any 지정
     rows.push({ label: r.ticker || "Equity", base: num(r.qty) * (num(r.avgCost) || 1) })
   );
 
@@ -137,7 +150,10 @@ function stressTest(summary: IntakeSummary) {
   };
 }
 
-export async function generateReportPDF(summary: IntakeSummary, options: BuildOptions = {}) {
+export async function generateReportPDF(
+  summary: IntakeSummary,
+  options: BuildOptions = {}
+) {
   // 데이터 가공
   const allocation = computeAllocation(summary);
   const top5 = topHoldings(summary);
@@ -154,7 +170,9 @@ export async function generateReportPDF(summary: IntakeSummary, options: BuildOp
   if (loss <= 20) insights.push(`손실허용 한도(${loss}%)에 민감합니다.`);
 
   // QR
-  const qrDataUrl = await QRCode.toDataURL(options.dashboardUrl || "https://example.com/dashboard");
+  const qrDataUrl = await QRCode.toDataURL(
+    options.dashboardUrl || "https://example.com/dashboard"
+  );
 
   // 템플릿 로드
   const html = await fs.readFile(TEMPLATE_PATH, "utf8");
@@ -174,20 +192,31 @@ export async function generateReportPDF(summary: IntakeSummary, options: BuildOp
       { term: "듀레이션", def: "금리변화에 대한 채권 가격 민감도." },
       { term: "리밸런싱", def: "목표 비중에 맞춰 자산을 재조정하는 행위." },
     ],
-    cta: { title: "대시보드에서 가정 바꿔보기", url: options.dashboardUrl || "https://example.com/dashboard" },
+    cta: {
+      title: "대시보드에서 가정 바꿔보기",
+      url: options.dashboardUrl || "https://example.com/dashboard",
+    },
     qr: qrDataUrl,
   };
 
-  const pageHtml = html.replace("/*__REPORT_PAYLOAD__*/", `window.__REPORT__ = ${JSON.stringify(payload)};`);
+  const pageHtml = html.replace(
+    "/*__REPORT_PAYLOAD__*/",
+    `window.__REPORT__ = ${JSON.stringify(payload)};`
+  );
 
   // 렌더링
-  const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox"],
+  });
   try {
     const page = await browser.newPage();
     await page.setContent(pageHtml, { waitUntil: "load" });
 
     // 차트/scripts 완료 신호 대기
-    await page.waitForFunction("window.__chartsReady === true", { timeout: 15000 });
+    await page.waitForFunction("window.__chartsReady === true", {
+      timeout: 15000,
+    });
 
     const pdf = await page.pdf({
       format: "A4",

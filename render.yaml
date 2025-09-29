@@ -4,8 +4,8 @@ services:
     env: node
     plan: free
     region: oregon
-    buildCommand: "npm ci && npm run build"
-    startCommand: "npm start"
+    buildCommand: "npm install --legacy-peer-deps && npm run build"
+    startCommand: "npm run start"
     envVars:
       - key: NODE_ENV
         value: production

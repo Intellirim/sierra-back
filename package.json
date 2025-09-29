@@ -1,11 +1,12 @@
 {
   "name": "sierra-back",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
+    "start": "node dist/index.js",
     "test:pdf": "ts-node testPdf.ts"
   },
   "dependencies": {
@@ -24,9 +25,13 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/node": "^20.12.13",
     "@types/qrcode": "^1.5.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.18 <23"
   }
 }
