@@ -23,10 +23,14 @@
       "devDependencies": {
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.3",
+        "@types/node": "^20.12.13",
         "@types/qrcode": "^1.5.5",
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.6.3"
+      },
+      "engines": {
+        "node": ">=18.18 <23"
       }
     },
     "node_modules/@babel/code-frame": {
@@ -243,13 +247,13 @@
       "license": "MIT"
     },
     "node_modules/@types/node": {
-      "version": "24.5.2",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-24.5.2.tgz",
-      "integrity": "sha512-FYxk1I7wPv3K2XBaoyH2cTnocQEu8AOZ60hPbsyukMPLv5/5qr7V1i8PLHdl6Zf87I+xZXFvPCXYjiTFq+YSDQ==",
+      "version": "20.19.18",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-20.19.18.tgz",
+      "integrity": "sha512-KeYVbfnbsBCyKG8e3gmUqAfyZNcoj/qpEbHRkQkfZdKOBrU7QQ+BsTdfqLSWX9/m1ytYreMhpKvp+EZi3UFYAg==",
       "devOptional": true,
       "license": "MIT",
       "dependencies": {
-        "undici-types": "~7.12.0"
+        "undici-types": "~6.21.0"
       }
     },
     "node_modules/@types/qrcode": {
@@ -467,9 +471,9 @@
       }
     },
     "node_modules/b4a": {
-      "version": "1.7.1",
-      "resolved": "https://registry.npmjs.org/b4a/-/b4a-1.7.1.tgz",
-      "integrity": "sha512-ZovbrBV0g6JxK5cGUF1Suby1vLfKjv4RWi8IxoaO/Mon8BDD9I21RxjHFtgQ+kskJqLAVyQZly3uMBui+vhc8Q==",
+      "version": "1.7.3",
+      "resolved": "https://registry.npmjs.org/b4a/-/b4a-1.7.3.tgz",
+      "integrity": "sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==",
       "license": "Apache-2.0",
       "peerDependencies": {
         "react-native-b4a": "*"
@@ -494,9 +498,9 @@
       "license": "Apache-2.0"
     },
     "node_modules/bare-fs": {
-      "version": "4.4.4",
-      "resolved": "https://registry.npmjs.org/bare-fs/-/bare-fs-4.4.4.tgz",
-      "integrity": "sha512-Q8yxM1eLhJfuM7KXVP3zjhBvtMJCYRByoTT+wHXjpdMELv0xICFJX+1w4c7csa+WZEOsq4ItJ4RGwvzid6m/dw==",
+      "version": "4.4.5",
+      "resolved": "https://registry.npmjs.org/bare-fs/-/bare-fs-4.4.5.tgz",
+      "integrity": "sha512-TCtu93KGLu6/aiGWzMr12TmSRS6nKdfhAnzTQRbXoSWxkbb9eRd53jQ51jG7g1gYjjtto3hbBrrhzg6djcgiKg==",
       "license": "Apache-2.0",
       "optional": true,
       "dependencies": {
@@ -1220,9 +1224,9 @@
       }
     },
     "node_modules/events-universal": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/events-universal/-/events-universal-1.0.0.tgz",
-      "integrity": "sha512-1KVXP1Oq8SiC0HsRraCryA4XGrZ2uJgIt/h4X+mB/8pzMKE7L8yBDN2lBlqJZeUwLAt7kf80m/5GX3HvoCrSGA==",
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/events-universal/-/events-universal-1.0.1.tgz",
+      "integrity": "sha512-LUd5euvbMLpwOF8m6ivPCbhQeSiYVNb8Vs0fQ8QjXo0JTkEHpz8pxdQf0gStltaPpw0Cca8b39KxvK9cfKRiAw==",
       "license": "Apache-2.0",
       "dependencies": {
         "bare-events": "^2.7.0"
@@ -2752,9 +2756,9 @@
       "license": "ISC"
     },
     "node_modules/resend": {
-      "version": "6.1.0",
-      "resolved": "https://registry.npmjs.org/resend/-/resend-6.1.0.tgz",
-      "integrity": "sha512-H0cJI2pcLk5/dGwyvZUHu+O7X/q6arvc40EWm+pRPuy+PSWojH5utZtmDBUZ2L0+gVwYZiWs6y2lw6GQA1z1rg==",
+      "version": "6.1.1",
+      "resolved": "https://registry.npmjs.org/resend/-/resend-6.1.1.tgz",
+      "integrity": "sha512-qHip8WF4uB2k83vG5EfLWQo27anlHpQagljWLFSIXgbkmNYzoIoAsXctl/RZJl7tf+7uCLM/MEwPzyW5zwCJTA==",
       "license": "MIT",
       "engines": {
         "node": ">=18"
@@ -3417,9 +3421,9 @@
       }
     },
     "node_modules/undici-types": {
-      "version": "7.12.0",
-      "resolved": "https://registry.npmjs.org/undici-types/-/undici-types-7.12.0.tgz",
-      "integrity": "sha512-goOacqME2GYyOZZfb5Lgtu+1IDmAlAEu5xnD3+xTzS10hT0vzpf0SPjkXwAw9Jm+4n/mQGDP3LO8CPbYROeBfQ==",
+      "version": "6.21.0",
+      "resolved": "https://registry.npmjs.org/undici-types/-/undici-types-6.21.0.tgz",
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==",
       "devOptional": true,
       "license": "MIT"
     },
